@@ -1,4 +1,4 @@
-/*How to write a tiny shell in C*/
+/*lähdelistalta How to write a tiny shell in C*/
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,28 +9,29 @@
 
 int main(void) {
 	for (;;) {
-	        char input[256] = { 0x0 };
-	        char *ptr = input;
-	        char *args[60] = { NULL };
+	        char in[256] = { 0x0 };	//alustaa komentolistan
+	        char *ptr = in;		//pointteri nykyiseen kohtaan
+	        char *args[99] = { NULL };	//alustaa argumentti listan
 	
-	        printf("wish >");
-	        fgets(input, 256, stdin);
+	        printf("wish >");	//kirjoittaa promptin
+	        fgets(in, 256, stdin);	//ootta inputin
 
-        	// ignore empty input
-        	if (*ptr == '\n') continue;
+        	
+        	if (*ptr == '\n') 
+			continue;	//ohittaa tyhjän inputin
 
-        	// convert input line to list of arguments
+        	//muuttaa inputin argumentti listaksi
         	for (int i = 0; i < sizeof(args) && *ptr; ptr++) {
         	    if (*ptr == ' ') continue;
-        	    if (*ptr == '\n') break;
+        	    if (*ptr == '\n') break;//kunnes rivinvaihto katkaisee
         	    for (args[i++] = ptr; *ptr && *ptr != ' ' && *ptr != '\n'; ptr++);
-        	    *ptr = '\0';
+        	    *ptr = '\0'; 
         	}
 
-        	// built-in: exit
-        	if (strcmp(EXITCMD, args[0]) == 0) return 0;
+        	
+        	if (strcmp(EXITCMD, args[0]) == 0) return 0;//jos input on exit sulkee shellin
 
-        	if (fork() == 0) exit(execvp(args[0], args));
+        	if (fork() == 0) exit(execvp(args[0], args));	//ajaa annetun komennon ja varmistaa päättymisen
 		wait(NULL);
 	}
 }
